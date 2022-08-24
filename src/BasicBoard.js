@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Chess } from "chess.js";
 
@@ -17,17 +17,20 @@ const BasicBoard = (props) => {
   // 1/ variables
   //**************************************************************************************************
 
-  const chess = new Chess();
-
   var board;
 
-  useEffect(() => {
-    console.log("useEffect2 called here");
+  //**************************************************************************************************
+  // 2/ useState
+  //**************************************************************************************************
 
-    const boardsDiv = document.getElementById("board");
-    const boardDiv = document.createElement("div");
-    // boardDiv.setAttribute("class", "board1");
-    boardsDiv.appendChild(boardDiv);
+  const [chess, setChess] = useState(new Chess());
+
+  //**************************************************************************************************
+  // 3/ useEffect
+  //**************************************************************************************************
+
+  useEffect(() => {
+    const boardDiv = document.getElementById("board"); // from parent : App.js
 
     board = new Chessboard(boardDiv, {
       position: chess.fen(),
@@ -45,16 +48,18 @@ const BasicBoard = (props) => {
         visuallyHidden: true, // hide all those extra outputs visually but keep them accessible for screen readers and braille displays
       },
     });
+
     board.enableMoveInput(inputHandler, COLOR.white);
 
     return () => {
       board.destroy();
-      boardsDiv.removeChild(boardDiv);
+      const boardDiv = document.getElementById("board"); // from parent : App.js
+      boardDiv.innerHTML = ""; // cleaning ...
     };
   }, []);
 
   //**************************************************************************************************
-  // 4/ functions générales
+  // 4/ general functions
   //**************************************************************************************************
 
   function inputHandler(event) {
@@ -91,7 +96,7 @@ const BasicBoard = (props) => {
   }
 
   //**************************************************************************************************
-  // 4/ return
+  // 5/ return
   //**************************************************************************************************
 
   return;

@@ -1,5 +1,5 @@
 import React from "react";
-import BasicBoard from "./Chessboard";
+import BasicBoard from "./BasicBoard";
 
 function App() {
   //
