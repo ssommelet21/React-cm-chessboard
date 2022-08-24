@@ -10,7 +10,7 @@ import {
   MARKER_TYPE,
 } from "cm-chessboard";
 
-import "./assets/styles/cm-chessboard.css";
+import "./styles/cm-chessboard.css";
 
 const BasicBoard = (props) => {
   //
@@ -25,6 +25,8 @@ const BasicBoard = (props) => {
   //**************************************************************************************************
 
   const [chess, setChess] = useState(new Chess());
+  const [fen, setFen] = useState("start");
+  const [history, setHistory] = useState([]);
 
   //**************************************************************************************************
   // 3/ useEffect
@@ -91,10 +93,21 @@ const BasicBoard = (props) => {
           setTimeout(() => {
             // smoother with 500ms delay
             chess.move({ from: randomMove.from, to: randomMove.to });
+
+            //
+            setFen(chess.fen());
+            setHistory(chess.history({ verbose: true }));
+            //
+
             event.chessboard.enableMoveInput(inputHandler, COLOR.white);
             event.chessboard.setPosition(chess.fen(), true);
           }, 500);
         }
+
+        //
+        setFen(chess.fen());
+        setHistory(chess.history({ verbose: true }));
+        //
       } else {
         console.warn("invalid move", move);
       }
@@ -106,7 +119,18 @@ const BasicBoard = (props) => {
   // 5/ return
   //**************************************************************************************************
 
-  return;
+  return (
+    <div
+      id="board"
+      style={{
+        float: "left",
+        width: `500px`,
+        height: `500px`,
+        marginRight: "20p",
+        marginBottom: "20px",
+      }}
+    ></div>
+  );
 };
 
 export default BasicBoard;
