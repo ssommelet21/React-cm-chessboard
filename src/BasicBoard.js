@@ -6,6 +6,7 @@ import {
   INPUT_EVENT_TYPE,
   COLOR,
   Chessboard,
+  BORDER_TYPE,
   MARKER_TYPE,
 } from "cm-chessboard";
 
@@ -36,10 +37,16 @@ const BasicBoard = (props) => {
       position: chess.fen(),
       sprite: { url: "/images/chessboard-sprite-staunty.svg" },
       style: {
+        cssClass: "", // green, chessboard-js, chess-club, blue, "", green
+        borderType: BORDER_TYPE.frame, // frame, thin, none
+        aspectRatio: 1,
+        showCoordinates: true,
         moveFromMarker: MARKER_TYPE.square,
         moveToMarker: MARKER_TYPE.square,
       },
       orientation: COLOR.white,
+      animationDuration: 1000,
+      responsive: true,
       accessibility: {
         brailleNotationInAlt: true, // show the braille notation of the game in the alt attribute of the svg
         movePieceForm: true, // display a form to move a piece (from, to, move)
