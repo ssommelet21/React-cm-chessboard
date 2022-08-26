@@ -56,7 +56,16 @@ function App() {
 
   return (
     <div
-      style={{ backgroundColor: "lightblue", padding: "10px", height: "520px" }}
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        alignContent: "center",
+        backgroundColor: "lightblue",
+        padding: "10px",
+        width: "calc(100vw - 60px)",
+        height: "calc(100vh - 60px)",
+      }}
     >
       <ReactCMChessboard
         animationDuration={600}
