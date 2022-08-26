@@ -51,8 +51,6 @@ const ReactCMChessboard = (props) => {
       ? props.animationDuration
       : 300;
 
-    let p_boardWidth = props.boardWidth ? props.boardWidth : 500;
-
     let p_showCoordinates = props.showCoordinates
       ? props.showCoordinates
       : false;
@@ -60,6 +58,10 @@ const ReactCMChessboard = (props) => {
     let p_boardOrientation = props.boardOrientation
       ? props.boardOrientation
       : COLOR.white;
+
+    let p_cssClass = props.cssClass ? props.cssClass : "";
+
+    let p_borderType = props.borderType ? props.borderType : BORDER_TYPE.thin;
 
     //**************************************************************************************************
     // b/ Display chessboard
@@ -71,8 +73,8 @@ const ReactCMChessboard = (props) => {
       position: chess.fen(),
       sprite: { url: "/images/chessboard-sprite-staunty.svg" },
       style: {
-        cssClass: "", // green, chessboard-js, chess-club, blue, "", green
-        borderType: BORDER_TYPE.thin, // frame, thin, none
+        cssClass: p_cssClass,
+        borderType: p_borderType,
         aspectRatio: 1,
         showCoordinates: p_showCoordinates,
         moveFromMarker: MARKER_TYPE.square,
@@ -177,18 +179,17 @@ const ReactCMChessboard = (props) => {
   // 5/ return
   //**************************************************************************************************
 
-  return (
-    <div
-      id={"board_" + uniqueId}
-      style={{
-        float: "left",
-        width: `500px`,
-        height: `500px`,
-        marginRight: "20p",
-        marginBottom: "20px",
-      }}
-    ></div>
-  );
+  let p_boardWidth = props.boardWidth ? props.boardWidth : 500;
+
+  let divStyle = {
+    float: "left",
+    width: p_boardWidth + "px",
+    height: p_boardWidth + "px",
+    marginRight: "20px",
+    marginBottom: "20px",
+  };
+
+  return <div id={"board_" + uniqueId} style={divStyle}></div>;
 };
 
 export default ReactCMChessboard;

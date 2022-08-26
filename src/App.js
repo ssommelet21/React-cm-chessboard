@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { COLOR } from "cm-chessboard";
+import { BORDER_TYPE, COLOR } from "cm-chessboard";
 import ReactCMChessboard from "./ReactCMChessboard";
 
 function App() {
@@ -69,10 +69,12 @@ function App() {
     >
       <ReactCMChessboard
         animationDuration={600}
-        boardWidth={600}
+        boardWidth={900}
         showCoordinates={false}
         position={position}
         boardOrientation={boardOrientation}
+        cssClass={""} // "", "chessboard-js", "chess-club", "blue", or ""
+        borderType={BORDER_TYPE.none} // frame, thin, none
         onMoveDone={onMoveDone}
       />
     </div>
