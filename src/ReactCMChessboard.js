@@ -118,6 +118,10 @@ const ReactCMChessboard = (props) => {
     //**************************************************************************************************
 
     return () => {
+      //
+      board.removeMarkers(); // before board.destroy()
+      board.removeArrows(); // before board.destroy()
+      //
       board.destroy();
       const boardDiv = document.getElementById("board_" + uniqueId); // from parent : App.js
       boardDiv.innerHTML = ""; // cleaning ...
