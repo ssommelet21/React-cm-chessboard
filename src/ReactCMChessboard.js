@@ -12,7 +12,13 @@ import {
   MARKER_TYPE,
 } from "cm-chessboard";
 
+import {
+  ARROW_TYPE,
+  Arrows,
+} from "cm-chessboard/src/cm-chessboard/extensions/arrows/Arrows";
+
 import "./styles/cm-chessboard.css";
+import "./styles/arrows/arrows.css";
 
 const ReactCMChessboard = (props) => {
   //
@@ -72,6 +78,16 @@ const ReactCMChessboard = (props) => {
         moveFromMarker: MARKER_TYPE.square,
         moveToMarker: MARKER_TYPE.square,
       },
+      extensions: [
+        {
+          class: Arrows,
+          props: {
+            sprite: {
+              url: "/images/arrows.svg",
+            },
+          },
+        },
+      ],
       orientation: p_boardOrientation,
       animationDuration: p_animationDuration,
       responsive: true,
@@ -85,6 +101,17 @@ const ReactCMChessboard = (props) => {
     });
 
     board.enableMoveInput(inputHandler);
+
+    board.addMarker(MARKER_TYPE.square, "e5");
+    board.addMarker(MARKER_TYPE.frame, "b6");
+    board.addMarker(MARKER_TYPE.frame, "h6");
+
+    board.addArrow(ARROW_TYPE.default, "g1", "f3");
+    board.addArrow(ARROW_TYPE.default, "b8", "c6");
+    board.addArrow(ARROW_TYPE.pointy, "c2", "c4");
+    board.addArrow(ARROW_TYPE.danger, "f6", "e4");
+
+    board.removeMarkers(MARKER_TYPE.frame, "h6");
 
     //**************************************************************************************************
     // c/ Unmount chessboard
@@ -101,35 +128,40 @@ const ReactCMChessboard = (props) => {
   // 4/ general functions
   //**************************************************************************************************
 
-  const handleOnMoveDone = (value, fen) => {
-    props.onMoveDone(value.from, value.to, fen);
+  const handleOnMoveStart = (chess, event) => {
+    const moves = chess.moves({ square: event.square, verbose: true });
+    for (const move of moves) {
+      event.chessboard.addMarker(MARKER_TYPE.dot, move.to);
+    }
+    return moves.length > 0;
+  };
+
+  const handleOnMoveDone = (chess, event) => {
+    const move = { from: event.squareFrom, to: event.squareTo };
+    const result = chess.move(move);
+    if (result) {
+      props.onMoveDone(move.from, move.to, chess.fen());
+      setTimeout(() => {
+        event.chessboard.setPosition(chess.fen(), true);
+      }, 500);
+    } else {
+      console.warn("invalid move", move);
+    }
+    return result;
   };
 
   function inputHandler(event) {
+    //
     event.chessboard.removeMarkers(MARKER_TYPE.dot);
+    //
 
     switch (event.type) {
       case INPUT_EVENT_TYPE.moveStart:
-        const moves = chess.moves({ square: event.square, verbose: true });
-        for (const move of moves) {
-          // draw dots on possible squares
-          event.chessboard.addMarker(MARKER_TYPE.dot, move.to);
-        }
-        return moves.length > 0;
+        return handleOnMoveStart(chess, event); // draw dots on possible squares
       case INPUT_EVENT_TYPE.moveDone:
-        const move = { from: event.squareFrom, to: event.squareTo };
-        const result = chess.move(move);
-        if (result) {
-          handleOnMoveDone(move, chess.fen());
-          setTimeout(() => {
-            event.chessboard.setPosition(chess.fen(), true);
-          }, 500);
-        } else {
-          console.warn("invalid move", move);
-        }
-        return result;
+        return handleOnMoveDone(chess, event); // check move valid or not
       case INPUT_EVENT_TYPE.moveCanceled:
-        console.log(`moveCanceled`);
+        console.log("moveCanceled");
         break;
       default:
         console.log(INPUT_EVENT_TYPE);
