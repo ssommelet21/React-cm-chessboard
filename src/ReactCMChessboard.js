@@ -23,8 +23,6 @@ const ReactCMChessboard = (props) => {
   // 1/ variables
   //**************************************************************************************************
 
-  // var board; // FIXME using REF instead ?
-
   //**************************************************************************************************
   // 2/ useState
   //**************************************************************************************************
@@ -43,23 +41,25 @@ const ReactCMChessboard = (props) => {
 
   useEffect(() => {
     if (board) {
-      board.removeMarkers();
-
-      props.showMarker.map((marker) => {
-        board.addMarker(marker.type, marker.from);
-      });
+      try {
+        board.removeMarkers();
+        props.showMarker.map((marker) => {
+          board.addMarker(marker.type, marker.from);
+        });
+      } catch (error) {}
     }
-  }, [props.showMarker]);
+  });
 
   useEffect(() => {
     if (board) {
-      board.removeArrows();
-
-      props.showArrow.map((arrow) => {
-        board.addArrow(arrow.type, arrow.from, arrow.to);
-      });
+      try {
+        board.removeArrows();
+        props.showArrow.map((arrow) => {
+          board.addArrow(arrow.type, arrow.from, arrow.to);
+        });
+      } catch (error) {}
     }
-  }, [props.showArrow]);
+  });
 
   useEffect(() => {
     if (board) {
@@ -127,22 +127,22 @@ const ReactCMChessboard = (props) => {
       },
     });
 
-    aboard.enableMoveInput(inputHandler);
-
     setBoard(aboard);
+
+    aboard.enableMoveInput(inputHandler);
 
     /*
 
-    board.addMarker(MARKER_TYPE.square, "e5");
-    board.addMarker(MARKER_TYPE.frame, "b6");
-    board.addMarker(MARKER_TYPE.frame, "h6");
+    aboard.addMarker(MARKER_TYPE.square, "e5");
+    aboard.addMarker(MARKER_TYPE.frame, "b6");
+    aboard.addMarker(MARKER_TYPE.frame, "h6");
 
-    board.addArrow(ARROW_TYPE.default, "g1", "f3");
-    board.addArrow(ARROW_TYPE.default, "b8", "c6");
-    board.addArrow(ARROW_TYPE.pointy, "c2", "c4");
-    board.addArrow(ARROW_TYPE.danger, "f6", "e4");
+    aboard.addArrow(ARROW_TYPE.default, "g1", "f3");
+    aboard.addArrow(ARROW_TYPE.default, "b8", "c6");
+    aboard.addArrow(ARROW_TYPE.pointy, "c2", "c4");
+    aboard.addArrow(ARROW_TYPE.danger, "f6", "e4");
 
-    board.removeMarkers(MARKER_TYPE.frame, "h6");
+    aboard.removeMarkers(MARKER_TYPE.frame, "h6");
 
     */
 
@@ -151,13 +151,15 @@ const ReactCMChessboard = (props) => {
     //**************************************************************************************************
 
     return () => {
-      //
-      aboard.removeMarkers(); // before aboard.destroy()
-      aboard.removeArrows(); // before aboard.destroy()
-      //
-      aboard.destroy();
-      const boardDiv = document.getElementById("board_" + uniqueId); // from parent : App.js
-      boardDiv.innerHTML = ""; // cleaning ...
+      try {
+        //
+        aboard.removeMarkers(); // before aboard.destroy()
+        aboard.removeArrows(); // before aboard.destroy()
+        //
+        aboard.destroy();
+        const boardDiv = document.getElementById("board_" + uniqueId); // from parent : App.js
+        boardDiv.innerHTML = ""; // cleaning ...
+      } catch (error) {}
       setBoard(null);
     };
   }, []);
