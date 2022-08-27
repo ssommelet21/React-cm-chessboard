@@ -12,10 +12,7 @@ import {
   MARKER_TYPE,
 } from "cm-chessboard";
 
-import {
-  ARROW_TYPE,
-  Arrows,
-} from "cm-chessboard/src/cm-chessboard/extensions/arrows/Arrows";
+import { Arrows } from "cm-chessboard/src/cm-chessboard/extensions/arrows/Arrows";
 
 import "./styles/cm-chessboard.css";
 import "./styles/arrows/arrows.css";
@@ -26,11 +23,13 @@ const ReactCMChessboard = (props) => {
   // 1/ variables
   //**************************************************************************************************
 
-  var board; // FIXME using REF instead ?
+  // var board; // FIXME using REF instead ?
 
   //**************************************************************************************************
   // 2/ useState
   //**************************************************************************************************
+
+  const [board, setBoard] = useState(null);
 
   const [uniqueId, setUniqueId] = useState(uuid());
 
@@ -41,6 +40,32 @@ const ReactCMChessboard = (props) => {
   //**************************************************************************************************
   // 3/ useEffect
   //**************************************************************************************************
+
+  useEffect(() => {
+    if (board) {
+      board.removeMarkers();
+
+      props.showMarker.map((marker) => {
+        board.addMarker(marker.type, marker.from);
+      });
+    }
+  }, [props.showMarker]);
+
+  useEffect(() => {
+    if (board) {
+      board.removeArrows();
+
+      props.showArrow.map((arrow) => {
+        board.addArrow(arrow.type, arrow.from, arrow.to);
+      });
+    }
+  }, [props.showArrow]);
+
+  useEffect(() => {
+    if (board) {
+      console.log("Board is ready !");
+    }
+  }, [board]);
 
   useEffect(() => {
     //**************************************************************************************************
@@ -69,7 +94,7 @@ const ReactCMChessboard = (props) => {
 
     const boardDiv = document.getElementById("board_" + uniqueId); // from parent : App.js
 
-    board = new Chessboard(boardDiv, {
+    const aboard = new Chessboard(boardDiv, {
       position: chess.fen(),
       sprite: { url: "/images/chessboard-sprite-staunty.svg" },
       style: {
@@ -102,7 +127,11 @@ const ReactCMChessboard = (props) => {
       },
     });
 
-    board.enableMoveInput(inputHandler);
+    aboard.enableMoveInput(inputHandler);
+
+    setBoard(aboard);
+
+    /*
 
     board.addMarker(MARKER_TYPE.square, "e5");
     board.addMarker(MARKER_TYPE.frame, "b6");
@@ -115,18 +144,21 @@ const ReactCMChessboard = (props) => {
 
     board.removeMarkers(MARKER_TYPE.frame, "h6");
 
+    */
+
     //**************************************************************************************************
     // c/ Unmount chessboard
     //**************************************************************************************************
 
     return () => {
       //
-      board.removeMarkers(); // before board.destroy()
-      board.removeArrows(); // before board.destroy()
+      aboard.removeMarkers(); // before aboard.destroy()
+      aboard.removeArrows(); // before aboard.destroy()
       //
-      board.destroy();
+      aboard.destroy();
       const boardDiv = document.getElementById("board_" + uniqueId); // from parent : App.js
       boardDiv.innerHTML = ""; // cleaning ...
+      setBoard(null);
     };
   }, []);
 
