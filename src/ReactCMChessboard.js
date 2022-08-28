@@ -63,6 +63,13 @@ const ReactCMChessboard = (props) => {
 
   useEffect(() => {
     if (board) {
+      console.log("Board is rotated !");
+      board.setOrientation(props.boardOrientation, false);
+    }
+  }, [props.boardOrientation]);
+
+  useEffect(() => {
+    if (board) {
       console.log("Board is ready !");
     }
   }, [board]);

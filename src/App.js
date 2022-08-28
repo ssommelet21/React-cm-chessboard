@@ -81,6 +81,12 @@ function App() {
     setArrows(ArrowsNoCopy);
   };
 
+  const RotateBoard = () => {
+    let p_boardOrientation =
+      boardOrientation === COLOR.white ? COLOR.black : COLOR.white;
+    setboardOrientation(p_boardOrientation);
+  };
+
   const onMoveDone = (sourceSquare, targetSquare, fen) => {
     console.log("Move played is " + sourceSquare + " " + targetSquare);
     console.log("Fen is " + fen);
@@ -98,6 +104,7 @@ function App() {
       <button onClick={() => AddMarker()}> Add marker on b6</button>
       <button onClick={() => AddArrow()}> Add arrow f6 e4</button>
       <button onClick={() => ClearAll()}> Clear markers & arrows </button>
+      <button onClick={() => RotateBoard()}> Rotate Board </button>
       <div
         style={{
           display: "flex",
