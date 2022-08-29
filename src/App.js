@@ -87,11 +87,11 @@ function App() {
     setboardOrientation(p_boardOrientation);
   };
 
-  const onMoveDone = (sourceSquare, targetSquare, fen) => {
+  const onMoveDone = (sourceSquare, targetSquare, san, fen) => {
     console.log("Move played is " + sourceSquare + " " + targetSquare);
     console.log("Fen is " + fen);
     setPosition(fen);
-    // handleMove(calculed_fen, move.san);
+    // handleMove(fen, san);
     return true; // FIXME ?!
   };
 

@@ -61,6 +61,25 @@ const ReactCMChessboard = (props) => {
     }
   });
 
+  //
+  // FIXME check if fen from parent is the same in ReactCMChessboard after manual move it is always the case ...
+  // but it can be different, because the parent control ReactCMChessboard
+  //
+  useEffect(() => {
+    if (board) {
+      console.log("Move is played !");
+      if (props.position !== chess.fen()) {
+        chess.load(props.position);
+        // board.disableMoveInput();
+        board.state.moveInputProcess.then(() => {
+          board.setPosition(props.position, true).then(() => {
+            console.log("setPosition is setback ! with : " + props.position);
+          });
+        });
+      }
+    }
+  }, [props.position]);
+
   useEffect(() => {
     if (board) {
       console.log("Board is rotated !");
@@ -187,10 +206,13 @@ const ReactCMChessboard = (props) => {
     const move = { from: event.squareFrom, to: event.squareTo };
     const result = chess.move(move);
     if (result) {
-      props.onMoveDone(move.from, move.to, chess.fen());
-      setTimeout(() => {
-        event.chessboard.setPosition(chess.fen(), true);
-      }, 500);
+      // event.chessboard.disableMoveInput();
+      event.chessboard.state.moveInputProcess.then(() => {
+        event.chessboard.setPosition(chess.fen(), true).then(() => {
+          console.log("setPosition is set ! with : " + chess.fen());
+          props.onMoveDone(move.from, move.to, result.san, chess.fen());
+        });
+      });
     } else {
       console.warn("invalid move", move);
     }
