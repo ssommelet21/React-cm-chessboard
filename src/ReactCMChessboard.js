@@ -30,6 +30,8 @@ const ReactCMChessboard = (props) => {
 
   const [board, setBoard] = useState(null);
 
+  const [show, setShow] = useState(false); // promotion
+
   const [uniqueId, setUniqueId] = useState(uuid());
 
   const [chess, setChess] = useState(
@@ -195,6 +197,12 @@ const ReactCMChessboard = (props) => {
   // 4/ general functions
   //**************************************************************************************************
 
+  const handleCloseModal = () => {
+    // modal.piece = event.target.getAttribute("data-piece")
+    console.log("lol");
+    setShow(!show);
+  };
+
   const handleOnMoveStart = (chess, event) => {
     const moves = chess.moves({ square: event.square, verbose: true });
     for (const move of moves) {
@@ -204,6 +212,13 @@ const ReactCMChessboard = (props) => {
   };
 
   const handleOnMoveDone = (chess, event) => {
+    if (
+      event.squareTo.substring(1, 2) === "8" ||
+      event.squareTo.substring(1, 2) === "1"
+    ) {
+      setShow(!show);
+      return;
+    }
     const move = { from: event.squareFrom, to: event.squareTo };
     const result = chess.move(move);
     if (result) {
@@ -254,11 +269,75 @@ const ReactCMChessboard = (props) => {
   };
 
   return (
-    <div
-      id={"board_" + uniqueId}
-      className="ReactCMChessboard"
-      style={divStyle}
-    ></div>
+    <>
+      <div
+        id={"board_" + uniqueId}
+        className="ReactCMChessboard"
+        style={divStyle}
+      ></div>
+      <div className="text-black">
+        <label>
+          <input
+            checked={show}
+            className="modal-toggle"
+            id="main-modal"
+            onChange={handleCloseModal}
+            type="checkbox"
+          />
+          Event promote!
+        </label>
+
+        <input
+          checked={show}
+          className="modal-toggle"
+          id="main-modal"
+          onChange={handleCloseModal}
+          type="checkbox"
+        />
+
+        <div className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Promotion!</h3>
+            <p className="py-4">Click a piece or cancel this window</p>
+            <div className="flex flex-wrap">
+              <div className="flex-[1_0_0%] text-center">
+                <svg height="100" width="100" data-piece="q">
+                  <use data-piece="q" xlinkHref="#bq" />
+                </svg>
+              </div>
+
+              <div className="flex-[1_0_0%] text-center">
+                <svg height="100" width="100" data-piece="r">
+                  <use data-piece="r" href="#wr" xlinkHref="#wr" />
+                </svg>
+              </div>
+
+              <div className="flex-[1_0_0%] text-center">
+                <svg height="100" width="100" data-piece="n">
+                  <use data-piece="n" xlinkHref="#wn" />
+                </svg>
+              </div>
+
+              <div className="flex-[1_0_0%] text-center">
+                <svg height="100" width="100" data-piece="b">
+                  <use data-piece="b" xlinkHref="#wb" />
+                </svg>
+              </div>
+            </div>
+
+            <div className="modal-action mt-0">
+              <label
+                htmlFor="my-modal"
+                className="btn"
+                onClick={handleCloseModal}
+              >
+                Cancel
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
