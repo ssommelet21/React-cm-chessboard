@@ -14,11 +14,10 @@ function Promotion(props) {
   // 3/ general functions
   //**************************************************************************************************
 
-  const handleCloseModal = () => {
-    // modal.piece = event.target.getAttribute("data-piece")
-    console.log("lol");
-    props.refreshFunction("queen");
-    // setShow(!show);
+  const handleCloseModal = (e) => {
+    const modalpiece = e.target.getAttribute("data-piece");
+    console.log("*" + modalpiece + "*");
+    props.refreshFunction(modalpiece);
   };
 
   //**************************************************************************************************
@@ -53,25 +52,42 @@ function Promotion(props) {
           <div className="flex flex-wrap">
             <div className="flex-[1_0_0%] text-center">
               <svg height="100" width="100" data-piece="q">
-                <use data-piece="q" xlinkHref="#bq" />
+                <use
+                  data-piece="q"
+                  onClick={(e) => handleCloseModal(e)}
+                  xlinkHref="#bq"
+                />
               </svg>
             </div>
 
             <div className="flex-[1_0_0%] text-center">
               <svg height="100" width="100" data-piece="r">
-                <use data-piece="r" href="#wr" xlinkHref="#wr" />
+                <use
+                  data-piece="r"
+                  href="#wr"
+                  onClick={(e) => handleCloseModal(e)}
+                  xlinkHref="#wr"
+                />
               </svg>
             </div>
 
             <div className="flex-[1_0_0%] text-center">
               <svg height="100" width="100" data-piece="n">
-                <use data-piece="n" xlinkHref="#wn" />
+                <use
+                  data-piece="n"
+                  onClick={(e) => handleCloseModal(e)}
+                  xlinkHref="#wn"
+                />
               </svg>
             </div>
 
             <div className="flex-[1_0_0%] text-center">
               <svg height="100" width="100" data-piece="b">
-                <use data-piece="b" xlinkHref="#wb" />
+                <use
+                  data-piece="b"
+                  onClick={(e) => handleCloseModal(e)}
+                  xlinkHref="#wb"
+                />
               </svg>
             </div>
           </div>
@@ -80,7 +96,8 @@ function Promotion(props) {
             <label
               htmlFor="my-modal"
               className="btn"
-              onClick={handleCloseModal}
+              data-piece=""
+              onClick={(e) => handleCloseModal(e)}
             >
               Cancel
             </label>

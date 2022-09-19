@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { Chess } from "chess.js";
 
@@ -27,12 +27,19 @@ const ReactCMChessboard = (props) => {
   //**************************************************************************************************
 
   //**************************************************************************************************
-  // 2/ useState
+  // 2/ useState & useRef
   //**************************************************************************************************
 
   const [board, setBoard] = useState(null);
+  const boardRef = useRef(board);
 
-  const [show, setShow] = useState(false); // promotion
+  const [show, setShow] = useState({
+    From: "",
+    To: "",
+    IsShow: false,
+    Color: null,
+  });
+  const showRef = useRef(show);
 
   const [uniqueId, setUniqueId] = useState(uuid());
 
@@ -43,6 +50,14 @@ const ReactCMChessboard = (props) => {
   //**************************************************************************************************
   // 3/ useEffect
   //**************************************************************************************************
+
+  useEffect(() => {
+    showRef.current = show;
+  }, [show]);
+
+  useEffect(() => {
+    boardRef.current = board;
+  }, [board]);
 
   useEffect(() => {
     if (board) {
@@ -200,8 +215,17 @@ const ReactCMChessboard = (props) => {
   //**************************************************************************************************
 
   const updateShow = (retour) => {
-    console.log(retour);
-    setShow(false);
+    let temp_oldShow = { ...showRef.current };
+    setShow({
+      From: "",
+      To: "",
+      IsShow: false,
+      Color: null,
+    });
+    if (retour) {
+      console.log(retour);
+      handleOnMoveDoneAction(chess, temp_oldShow.From, temp_oldShow.To, retour);
+    }
   };
 
   const handleOnMoveStart = (chess, event) => {
@@ -213,23 +237,51 @@ const ReactCMChessboard = (props) => {
   };
 
   const handleOnMoveDone = (chess, event) => {
+    const typeOfPiece = chess.get(event.squareFrom);
     if (
-      event.squareTo.substring(1, 2) === "8" ||
-      event.squareTo.substring(1, 2) === "1"
+      (event.squareTo.substring(1, 2) === "8" ||
+        event.squareTo.substring(1, 2) === "1") &&
+      typeOfPiece.type === "p"
     ) {
-      setShow(!show);
+      setShow({
+        From: event.squareFrom,
+        To: event.squareTo,
+        IsShow: true,
+        Color: chess.turn(),
+      });
       return;
     }
-    const move = { from: event.squareFrom, to: event.squareTo };
+    return handleOnMoveDoneAction(chess, event.squareFrom, event.squareTo);
+  };
+
+  const handleOnMoveDoneAction = (
+    chess,
+    squareFrom,
+    squareTo,
+    piecePromotion = "q"
+  ) => {
+    const temp_board = boardRef.current;
+    const move = {
+      from: squareFrom,
+      to: squareTo,
+      promotion: piecePromotion,
+    };
     const result = chess.move(move);
     if (result) {
-      // event.chessboard.disableMoveInput();
-      event.chessboard.state.moveInputProcess.then(() => {
-        event.chessboard.setPosition(chess.fen(), true).then(() => {
+      // temp_board.disableMoveInput();
+      if (temp_board.state.moveInputProcess === undefined) {
+        temp_board.setPosition(chess.fen(), true).then(() => {
           console.log("setPosition is set ! with : " + chess.fen());
           props.onMoveDone(move.from, move.to, result.san, chess.fen());
         });
-      });
+      } else {
+        temp_board.state.moveInputProcess.then(() => {
+          temp_board.setPosition(chess.fen(), true).then(() => {
+            console.log("setPosition is set ! with : " + chess.fen());
+            props.onMoveDone(move.from, move.to, result.san, chess.fen());
+          });
+        });
+      }
     } else {
       console.warn("invalid move", move);
     }
@@ -276,7 +328,11 @@ const ReactCMChessboard = (props) => {
         className="ReactCMChessboard"
         style={divStyle}
       ></div>
-      <Promotion show={show} refreshFunction={updateShow} />
+      <Promotion
+        show={show.IsShow}
+        color={show.Color}
+        refreshFunction={updateShow}
+      />
     </>
   );
 };
