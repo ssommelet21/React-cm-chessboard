@@ -1,0 +1,16 @@
+.ReactCMChessboard div {
+  background-image: url(https://lichess1.org/assets/_0tHtbz/images/board/blue-marble.jpg);
+  background-size: cover;
+}
+
+.cm-chessboard.default.border-type-none .board .border {
+  fill-opacity: 0.1;
+}
+
+.cm-chessboard.default .board .square.black {
+  fill-opacity: 0.1;
+}
+
+.cm-chessboard.default .board .square.black {
+  fill-opacity: 0.1;
+}

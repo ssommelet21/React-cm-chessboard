@@ -15,6 +15,7 @@ import {
 import { Arrows } from "cm-chessboard/src/cm-chessboard/extensions/arrows/Arrows";
 
 import "./styles/cm-chessboard.css";
+import "./styles/textured.css";
 import "./styles/arrows/arrows.css";
 
 const ReactCMChessboard = (props) => {
@@ -252,7 +253,13 @@ const ReactCMChessboard = (props) => {
     marginBottom: "20px",
   };
 
-  return <div id={"board_" + uniqueId} style={divStyle}></div>;
+  return (
+    <div
+      id={"board_" + uniqueId}
+      className="ReactCMChessboard"
+      style={divStyle}
+    ></div>
+  );
 };
 
 export default ReactCMChessboard;
