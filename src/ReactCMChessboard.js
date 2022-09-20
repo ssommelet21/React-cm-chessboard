@@ -229,15 +229,23 @@ const ReactCMChessboard = (props) => {
   };
 
   const handleOnMoveStart = (chess, event) => {
+    let typeOfPiece;
     const moves = chess.moves({ square: event.square, verbose: true });
     for (const move of moves) {
-      event.chessboard.addMarker(MARKER_TYPE.dot, move.to);
+      typeOfPiece = chess.get(move.to);
+      console.log(typeOfPiece);
+      if (typeOfPiece !== null) {
+        event.chessboard.addMarker(MARKER_TYPE.frame, move.to);
+      } else {
+        event.chessboard.addMarker(MARKER_TYPE.dot, move.to);
+      }
     }
     return moves.length > 0;
   };
 
   const handleOnMoveDone = (chess, event) => {
     const typeOfPiece = chess.get(event.squareFrom);
+    // FIXME test if move is valid !!
     if (
       (event.squareTo.substring(1, 2) === "8" ||
         event.squareTo.substring(1, 2) === "1") &&
@@ -290,6 +298,7 @@ const ReactCMChessboard = (props) => {
 
   function inputHandler(event) {
     //
+    event.chessboard.removeMarkers(MARKER_TYPE.frame);
     event.chessboard.removeMarkers(MARKER_TYPE.dot);
     //
 
