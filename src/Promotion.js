@@ -47,7 +47,7 @@ function Promotion(props) {
       <div className="modal">
         <div className="modal-box">
           <label
-            class="btn btn-sm btn-circle absolute right-2 top-2"
+            className="btn btn-sm btn-circle absolute right-2 top-2"
             data-piece=""
             onClick={(e) => handleCloseModal(e)}
           >

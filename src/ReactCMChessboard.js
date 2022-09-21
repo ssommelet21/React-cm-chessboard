@@ -60,24 +60,22 @@ const ReactCMChessboard = (props) => {
   }, [board]);
 
   useEffect(() => {
+    let board = boardRef.current;
     if (board) {
-      try {
-        board.removeMarkers();
-        props.showMarker.map((marker) => {
-          board.addMarker(marker.type, marker.from);
-        });
-      } catch (error) {}
+      board.removeMarkers();
+      props.showMarker.map((marker) => {
+        board.addMarker(marker.type, marker.from);
+      });
     }
   });
 
   useEffect(() => {
+    let board = boardRef.current;
     if (board) {
-      try {
-        board.removeArrows();
-        props.showArrow.map((arrow) => {
-          board.addArrow(arrow.type, arrow.from, arrow.to);
-        });
-      } catch (error) {}
+      board.removeArrows();
+      props.showArrow.map((arrow) => {
+        board.addArrow(arrow.type, arrow.from, arrow.to);
+      });
     }
   });
 
