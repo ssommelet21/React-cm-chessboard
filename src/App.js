@@ -114,12 +114,13 @@ function App() {
           backgroundColor: "lightblue",
           padding: "10px",
           width: "calc(100vw - 60px)",
-          height: "calc(100vh - 100px)",
+          height: "calc(100vh - 82px)",
         }}
       >
         <ReactCMChessboard
           animationDuration={600}
           boardWidth={800}
+          repaint={null}
           showCoordinates={false}
           position={position}
           boardOrientation={boardOrientation}

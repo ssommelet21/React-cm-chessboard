@@ -87,18 +87,25 @@ const ReactCMChessboard = (props) => {
   //
   useEffect(() => {
     if (board) {
-      console.log("Move is played !");
+      console.log("Fen position is changed on cm-chessboard !");
       if (props.position !== chess.fen()) {
         chess.load(props.position);
         // board.disableMoveInput();
-        board.state.moveInputProcess.then(() => {
+
+        if (board.state.moveInputProcess === undefined) {
           board.setPosition(props.position, true).then(() => {
             console.log("setPosition is setback ! with : " + props.position);
           });
-        });
+        } else {
+          board.state.moveInputProcess.then(() => {
+            board.setPosition(props.position, true).then(() => {
+              console.log("setPosition is setback ! with : " + props.position);
+            });
+          });
+        }
       }
     }
-  }, [props.position]);
+  }, [props.position, props.repaint]);
 
   useEffect(() => {
     if (board) {
@@ -323,11 +330,8 @@ const ReactCMChessboard = (props) => {
   let p_boardWidth = props.boardWidth ? props.boardWidth : 500;
 
   let divStyle = {
-    float: "left",
     width: p_boardWidth + "px",
     height: p_boardWidth + "px",
-    marginRight: "20px",
-    marginBottom: "20px",
   };
 
   return (
