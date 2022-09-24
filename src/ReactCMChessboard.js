@@ -62,20 +62,24 @@ const ReactCMChessboard = (props) => {
   useEffect(() => {
     let board = boardRef.current;
     if (board) {
-      board.removeMarkers();
-      props.showMarker.map((marker) => {
-        board.addMarker(marker.type, marker.from);
-      });
+      try {
+        board.removeMarkers();
+        props.showMarker.map((marker) => {
+          board.addMarker(marker.type, marker.from);
+        });
+      } catch (error) {}
     }
   });
 
   useEffect(() => {
     let board = boardRef.current;
     if (board) {
-      board.removeArrows();
-      props.showArrow.map((arrow) => {
-        board.addArrow(arrow.type, arrow.from, arrow.to);
-      });
+      try {
+        board.removeArrows();
+        props.showArrow.map((arrow) => {
+          board.addArrow(arrow.type, arrow.from, arrow.to);
+        });
+      } catch (error) {}
     }
   });
 
@@ -238,7 +242,6 @@ const ReactCMChessboard = (props) => {
     const moves = chess.moves({ square: event.square, verbose: true });
     for (const move of moves) {
       typeOfPiece = chess.get(move.to);
-      console.log(typeOfPiece);
       if (typeOfPiece !== null) {
         event.chessboard.addMarker(MARKER_TYPE.frame, move.to);
       } else {
@@ -249,22 +252,40 @@ const ReactCMChessboard = (props) => {
   };
 
   const handleOnMoveDone = (chess, event) => {
-    const typeOfPiece = chess.get(event.squareFrom);
-    // FIXME test if move is valid !!
-    if (
-      (event.squareTo.substring(1, 2) === "8" ||
-        event.squareTo.substring(1, 2) === "1") &&
-      typeOfPiece.type === "p"
-    ) {
-      setShow({
-        From: event.squareFrom,
-        To: event.squareTo,
-        IsShow: true,
-        Color: chess.turn(),
-      });
-      return;
+    const move = {
+      from: event.squareFrom,
+      to: event.squareTo,
+      promotion: "q",
+    };
+    const new_chess = new Chess(chess.fen());
+    const result = new_chess.move(move);
+    if (result) {
+      const typeOfPiece = chess.get(event.squareFrom);
+      let typeOfPiece_pawn = typeOfPiece ? true : false;
+      //
+      if (!(typeOfPiece_pawn && typeOfPiece.type === "p")) {
+        typeOfPiece_pawn = false;
+      }
+      //
+      if (
+        (event.squareTo.substring(1, 2) === "8" ||
+          event.squareTo.substring(1, 2) === "1") &&
+        typeOfPiece_pawn
+      ) {
+        setShow({
+          From: event.squareFrom,
+          To: event.squareTo,
+          IsShow: true,
+          Color: chess.turn(),
+        });
+        return;
+      } else {
+        return handleOnMoveDoneAction(chess, event.squareFrom, event.squareTo);
+      }
+    } else {
+      console.warn("invalid move", move);
+      return result;
     }
-    return handleOnMoveDoneAction(chess, event.squareFrom, event.squareTo);
   };
 
   const handleOnMoveDoneAction = (
@@ -279,25 +300,24 @@ const ReactCMChessboard = (props) => {
       to: squareTo,
       promotion: piecePromotion,
     };
-    const result = chess.move(move);
-    if (result) {
-      // temp_board.disableMoveInput();
-      if (temp_board.state.moveInputProcess === undefined) {
+
+    const result = chess.move(move); // move is always valid because it was called by handleOnMoveDone
+
+    // temp_board.disableMoveInput();
+    if (temp_board.state.moveInputProcess === undefined) {
+      temp_board.setPosition(chess.fen(), true).then(() => {
+        console.log("setPosition is set ! with : " + chess.fen());
+        props.onMoveDone(move.from, move.to, result.san, chess.fen());
+      });
+    } else {
+      temp_board.state.moveInputProcess.then(() => {
         temp_board.setPosition(chess.fen(), true).then(() => {
           console.log("setPosition is set ! with : " + chess.fen());
           props.onMoveDone(move.from, move.to, result.san, chess.fen());
         });
-      } else {
-        temp_board.state.moveInputProcess.then(() => {
-          temp_board.setPosition(chess.fen(), true).then(() => {
-            console.log("setPosition is set ! with : " + chess.fen());
-            props.onMoveDone(move.from, move.to, result.san, chess.fen());
-          });
-        });
-      }
-    } else {
-      console.warn("invalid move", move);
+      });
     }
+
     return result;
   };
 
