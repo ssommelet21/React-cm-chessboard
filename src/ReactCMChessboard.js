@@ -257,7 +257,7 @@ const ReactCMChessboard = (props) => {
       to: event.squareTo,
       promotion: "q",
     };
-    const new_chess = new Chess(chess.fen());
+    const new_chess = new Chess(chess.fen()); // the move need to be tested before to be played in case of promotion ...
     const result = new_chess.move(move);
     if (result) {
       const typeOfPiece = chess.get(event.squareFrom);

@@ -25,17 +25,6 @@ function Promotion(props) {
 
   return (
     <div className="text-black">
-      <label>
-        <input
-          checked={props.show}
-          className="modal-toggle"
-          id="main-modal"
-          onChange={handleCloseModal}
-          type="checkbox"
-        />
-        Event promote!
-      </label>
-
       <input
         checked={props.show}
         className="modal-toggle"
@@ -43,7 +32,6 @@ function Promotion(props) {
         onChange={handleCloseModal}
         type="checkbox"
       />
-
       <div className="modal">
         <div className="modal-box">
           <label
@@ -60,7 +48,7 @@ function Promotion(props) {
                 <use
                   data-piece="q"
                   onClick={(e) => handleCloseModal(e)}
-                  xlinkHref="#bq"
+                  xlinkHref={"#" + props.color + "q"}
                 />
               </svg>
             </div>
@@ -69,9 +57,8 @@ function Promotion(props) {
               <svg width="40" height="40" data-piece="r">
                 <use
                   data-piece="r"
-                  href="#wr"
                   onClick={(e) => handleCloseModal(e)}
-                  xlinkHref="#wr"
+                  xlinkHref={"#" + props.color + "r"}
                 />
               </svg>
             </div>
@@ -81,7 +68,7 @@ function Promotion(props) {
                 <use
                   data-piece="n"
                   onClick={(e) => handleCloseModal(e)}
-                  xlinkHref="#wn"
+                  xlinkHref={"#" + props.color + "n"}
                 />
               </svg>
             </div>
@@ -91,7 +78,7 @@ function Promotion(props) {
                 <use
                   data-piece="b"
                   onClick={(e) => handleCloseModal(e)}
-                  xlinkHref="#wb"
+                  xlinkHref={"#" + props.color + "b"}
                 />
               </svg>
             </div>
