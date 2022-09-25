@@ -257,14 +257,14 @@ const ReactCMChessboard = (props) => {
       to: event.squareTo,
       promotion: "q",
     };
-    const new_chess = new Chess(chess.fen()); // the move need to be tested before to be played in case of promotion ...
-    const result = new_chess.move(move);
+    const new_chess = new Chess(chess.fen()); // in fact the move need to be tested BEFORE to be played for handle promotion ...
+    const result = new_chess.move(move); // so we use a new chess.js object
     if (result) {
       const typeOfPiece = chess.get(event.squareFrom);
       let typeOfPiece_pawn = typeOfPiece ? true : false;
       //
       if (!(typeOfPiece_pawn && typeOfPiece.type === "p")) {
-        typeOfPiece_pawn = false;
+        typeOfPiece_pawn = false; // correction : not a pawn
       }
       //
       if (
@@ -329,7 +329,7 @@ const ReactCMChessboard = (props) => {
 
     switch (event.type) {
       case INPUT_EVENT_TYPE.moveStart:
-        return handleOnMoveStart(chess, event); // draw dots on possible squares
+        return handleOnMoveStart(chess, event); // draw dots, frames on possible squares
       case INPUT_EVENT_TYPE.moveDone:
         return handleOnMoveDone(chess, event); // check move valid or not
       case INPUT_EVENT_TYPE.moveCanceled:
