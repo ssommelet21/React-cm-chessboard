@@ -1,0 +1,6 @@
+.cm-chessboard .markers .marker.markerCheckCircleRed,
+.cm-chessboard .markers .marker.marker-checkcircle-red {
+  stroke: #aa0000;
+  stroke-width: 25px;
+  opacity: 0.4;
+}

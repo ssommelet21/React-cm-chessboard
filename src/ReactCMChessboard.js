@@ -17,8 +17,18 @@ import { Arrows } from "cm-chessboard/src/cm-chessboard/extensions/arrows/Arrows
 import Promotion from "./Promotion";
 
 import "./styles/cm-chessboard.css";
+import "./styles/cm-chessNObook.css";
 import "./styles/textured.css";
 import "./styles/arrows/arrows.css";
+
+//**************************************************************************************************
+// require
+//**************************************************************************************************
+
+const {
+  GetActiveColorFromFen,
+  get_piece_positions,
+} = require("./Includes/global");
 
 const ReactCMChessboard = (props) => {
   //
@@ -60,27 +70,8 @@ const ReactCMChessboard = (props) => {
   }, [board]);
 
   useEffect(() => {
-    let board = boardRef.current;
-    if (board) {
-      try {
-        board.removeMarkers();
-        props.showMarker.map((marker) => {
-          board.addMarker(marker.type, marker.from);
-        });
-      } catch (error) {}
-    }
-  });
-
-  useEffect(() => {
-    let board = boardRef.current;
-    if (board) {
-      try {
-        board.removeArrows();
-        props.showArrow.map((arrow) => {
-          board.addArrow(arrow.type, arrow.from, arrow.to);
-        });
-      } catch (error) {}
-    }
+    console.log("redisplay marker and arrow and check");
+    displayMarkerAndArrowAndCheck();
   });
 
   //
@@ -223,6 +214,44 @@ const ReactCMChessboard = (props) => {
   // 4/ general functions
   //**************************************************************************************************
 
+  const displayMarkerAndArrowAndCheck = () => {
+    let board = boardRef.current;
+    if (board) {
+      //
+      try {
+        board.removeMarkers();
+        props.showMarker.map((marker) => {
+          board.addMarker(marker.type, marker.from);
+        });
+      } catch (error) {}
+      //
+      try {
+        board.removeArrows();
+        props.showArrow.map((arrow) => {
+          board.addArrow(arrow.type, arrow.from, arrow.to);
+        });
+      } catch (error) {}
+      //
+      displayKingCheck();
+    }
+  };
+
+  const displayKingCheck = () => {
+    let board = boardRef.current;
+    console.log("enter king stuff");
+    if (chess.in_check()) {
+      const myMarkerType = {
+        class: "markerCheckCircleRed",
+        slice: "markerDot",
+      };
+      const return_king = get_piece_positions(chess, {
+        type: "k",
+        color: GetActiveColorFromFen(chess.fen()),
+      });
+      board.addMarker(myMarkerType, return_king[0]);
+    }
+  };
+
   const updateShow = (retour) => {
     let temp_oldShow = { ...showRef.current };
     setShow({
@@ -238,6 +267,10 @@ const ReactCMChessboard = (props) => {
   };
 
   const handleOnMoveStart = (chess, event) => {
+    // const myMarkerType = { class: "markerCircleRed", slice: "markerCircle" }; // class and id svg
+    // const myMarkerType = { class: "markerCheckCircleRed", slice: "markerDot" }; // class and id svg
+    //
+    // markerFrame markerCircle markerDot markerSquare : from chessboard-sprite-staunty.svg or others
     let typeOfPiece;
     const moves = chess.moves({ square: event.square, verbose: true });
     for (const move of moves) {
@@ -245,9 +278,10 @@ const ReactCMChessboard = (props) => {
       if (typeOfPiece !== null) {
         event.chessboard.addMarker(MARKER_TYPE.frame, move.to);
       } else {
-        event.chessboard.addMarker(MARKER_TYPE.dot, move.to);
+        event.chessboard.addMarker(MARKER_TYPE.dot, move.to); // myMarkerType, move.to
       }
     }
+    displayKingCheck(); // add a marker red on king if the king is attacked
     return moves.length > 0;
   };
 
@@ -323,8 +357,8 @@ const ReactCMChessboard = (props) => {
 
   function inputHandler(event) {
     //
-    event.chessboard.removeMarkers(MARKER_TYPE.frame);
-    event.chessboard.removeMarkers(MARKER_TYPE.dot);
+    event.chessboard.removeMarkers();
+    event.chessboard.removeArrows();
     //
 
     switch (event.type) {
@@ -334,6 +368,7 @@ const ReactCMChessboard = (props) => {
         return handleOnMoveDone(chess, event); // check move valid or not
       case INPUT_EVENT_TYPE.moveCanceled:
         console.log("moveCanceled");
+        displayKingCheck(); // add a marker red on king if the king is attacked
         break;
       default:
         console.log(INPUT_EVENT_TYPE);
