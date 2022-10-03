@@ -36,6 +36,11 @@ const ReactCMChessboard = (props) => {
   // 1/ variables
   //**************************************************************************************************
 
+  const MarkerCheckType = {
+    class: "markerCheckCircleRed",
+    slice: "markerDot",
+  };
+
   //**************************************************************************************************
   // 2/ useState & useRef
   //**************************************************************************************************
@@ -83,8 +88,9 @@ const ReactCMChessboard = (props) => {
       console.log("Fen position is changed on cm-chessboard !");
       if (props.position !== chess.fen()) {
         chess.load(props.position);
+        RemoveKingCheckIfExist();
+        displayKingCheck();
         // board.disableMoveInput();
-
         if (board.state.moveInputProcess === undefined) {
           board.setPosition(props.position, true).then(() => {
             console.log("setPosition is setback ! with : " + props.position);
@@ -236,19 +242,19 @@ const ReactCMChessboard = (props) => {
     }
   };
 
+  const RemoveKingCheckIfExist = () => {
+    let board = boardRef.current;
+    board.removeMarkers(MarkerCheckType, undefined);
+  };
+
   const displayKingCheck = () => {
     let board = boardRef.current;
-    console.log("enter king stuff");
     if (chess.in_check()) {
-      const myMarkerType = {
-        class: "markerCheckCircleRed",
-        slice: "markerDot",
-      };
       const return_king = get_piece_positions(chess, {
         type: "k",
         color: GetActiveColorFromFen(chess.fen()),
       });
-      board.addMarker(myMarkerType, return_king[0]);
+      board.addMarker(MarkerCheckType, return_king[0]);
     }
   };
 
